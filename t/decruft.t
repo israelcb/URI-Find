@@ -224,18 +224,15 @@ my @tasks = (
 );
 
 my @replacements = (
-    undef
+    undef, '', 0
+    , 1, -1, 1_111.11
+    
     , '> URL <'
     , '**&', '&&&'
     , '([{;;> URL <,,}])'
     , ' https://perl.org'
     , 'https://perl.org;;'
-    , '', 0, 1, -1, 1_111.11
-    
-    , (sub { \(my $hash = {})     })->()
-    , (sub { \(my $scalar = 0)    })->()
-    , (sub { \(my $array = [])    })->()
-    , (sub { \(my $code = sub {}) })->()
+    , ' https://perl.org[]'
 );
 
 run_tasks(
