@@ -56,9 +56,10 @@ my @tasks = (
     , "ftp://myserver.net"
     , "custom://www.x.com"
     , "http://www.perl.com"
-    , "ftp://myserver.net🤫"
-    , "https://www.zed.dev/"
     , "ws://super-socket.io"
+    , "https://www.zed.dev/"
+    , "https://www.zed.dev//"
+    , "https://www.zed.dev///"
     , "https://pulsar-edit.dev"
     , "https://duckduckgo.com/"
     , "https://duckduckgo.com/>"
@@ -66,17 +67,6 @@ my @tasks = (
     , "https://medium.com#cake?cache=cheese"
     , "https://duckduckgo.com/?q=raku%20programming"
     , "https://medium.com?cache=x&hash=iofremiovj43v453v4"
-    
-    , "https://www.perlmonks.org"
-    , "https://www.perlmonks.org?"
-    , "https://www.perlmonks.org&"
-    , "https://www.perlmonks.org?&"
-    , "https://www.perlmonks.org?&{"
-    , "https://www.perlmonks.org?&{}"
-    
-    , "https://medium.com?cache=cheese"
-    , "https://medium.com?cache=cheese["
-    , "https://medium.com?cache=cheese[]"
     
     , "https://raku.org\t"
     , "\t\thttps://raku.org\t"
@@ -94,6 +84,67 @@ my @tasks = (
     , "  ftp://myserver.net. ;https://perl.org;:::"
     , "https://www.perlmonks.org?gov=--3&&perl_v=5006!"
     , "\"\@https://www.perlmonks.org?gov=--3&&perl_v=5006;\@"
+
+    , "ftp://myserver.net🤫"
+    , " ftp://myserver.net⚡️  "
+    , "⚠️ ftp://myserver.net🤫  "
+    , " ⚠️ ftp://myserver.net🏴‍☠️  🔴"
+    , "🚨 ftp://myserver.net🏓  🤡  "
+    
+    , "https://www.perlmonks.org&"
+    , "https://www.perlmonks.org["
+    , "https://www.perlmonks.org{"
+    , "https://www.perlmonks.org("
+    , "https://www.perlmonks.org[]"
+    , "https://www.perlmonks.org{}"
+    , "https://www.perlmonks.org()"
+
+    , "https://www.perlmonks.org?"
+    , "https://www.perlmonks.org?["
+    , "https://www.perlmonks.org?{"
+    , "https://www.perlmonks.org?("
+    , "https://www.perlmonks.org?[]"
+    , "https://www.perlmonks.org?{}"
+    , "https://www.perlmonks.org?()"
+    
+    , "https://www.perlmonks.org/&"
+    , "https://www.perlmonks.org/&["
+    , "https://www.perlmonks.org/&{"
+    , "https://www.perlmonks.org/&("
+    , "https://www.perlmonks.org/&[]"
+    , "https://www.perlmonks.org/&{}"
+    , "https://www.perlmonks.org/&()"
+    
+    , "https://www.perlmonks.org//?&"
+    , "https://www.perlmonks.org//?&["
+    , "https://www.perlmonks.org//?&{"
+    , "https://www.perlmonks.org//?&("
+    , "https://www.perlmonks.org//?&[]"
+    , "https://www.perlmonks.org//?&{}"
+    , "https://www.perlmonks.org//?&()"
+    
+    , "https://www.perlmonks.org??"
+    , "https://www.perlmonks.org&?"
+    , "https://www.perlmonks.org&&"
+    , "https://www.perlmonks.org[  "
+    , " https://www.perlmonks.org("
+    , "  https://www.perlmonks.org?   "
+    , "https://www.perlmonks.org?[  \t"
+    , " 🚫https://www.perlmonks.org?[]"
+    , " https://www.perlmonks.org?{}  "
+    , " https://www.perlmonks.org?{}  \n"
+    , " https://www.perlmonks.org?{}  \r\n"
+    , "\thttps://www.perlmonks.org?{}  \r\n"
+    
+    , "https://medium.com?cache=cheese"
+    , "https://medium.com?cache=cheese["
+    , "https://medium.com?cache=cheese[]"
+    
+    , "https://medium.com?cache=cheese{"
+    , "https://medium.com?cache=cheese{}"
+    
+    , "https://medium.com?cache=cheese("
+    , "https://medium.com?cache=cheese()"
     
     , [
         # Expected result (all tests bellow)
@@ -119,40 +170,81 @@ my @tasks = (
     
     , [
         "https://www.duckduckgo.com/",
+        "https://www.duckduckgo.com/)",
+        "https://www.duckduckgo.com/]",
+        "https://www.duckduckgo.com/}",
         "https://www.duckduckgo.com/.",
         "https://www.duckduckgo.com/;",
         "https://www.duckduckgo.com/,",
         "https://www.duckduckgo.com/''",
+        "https://www.duckduckgo.com/))",
+        "https://www.duckduckgo.com/}]",
+        "https://www.duckduckgo.com/)]",
         "https://www.duckduckgo.com/\"\"",
     ]
 
     , [
-        "(https://www.cpan.org)"
-        , "(https://www.cpan.org)"
-        , "(https://www.cpan.org)])"
-        , "(https://www.cpan.org)})"
-        , "(https://www.cpan.org);;)"
-        , "(https://www.cpan.org),)"
+        "(https://www.cpan.org)",
+        "(https://www.cpan.org))",
+        "(https://www.cpan.org)))",
+        "(https://www.cpan.org))))",
         
-        # RETRY:
-        # , "(https://www.cpan.org)[}]"
-        # , "(https://www.cpan.org)[\]]"
+        "(https://www.cpan.org,)",
+        "(https://www.cpan.org.)",
+        "(https://www.cpan.org;)",
+        "(https://www.cpan.org')",
+        "(https://www.cpan.org),)",
+        "(https://www.cpan.org];])",
+        "(https://www.cpan.org);;)",
+        "(https://www.cpan.org}};})",
+        "(https://www.cpan.org);;)])",
+        "(https://www.cpan.org);;)]}.),)",
+        "(https://www.cpan.org);;)]}.),))",
+        "(https://www.cpan.org);;)]]}.),))",
+        "(https://www.cpan.org);;)]]}.),)'\)",
+        "(https://www.cpan.org);;)]]}.),)'\")",
+        
+        "(https://www.cpan.org])",
+        "(https://www.cpan.org]])",
+        "(https://www.cpan.org]]])",
+        "(https://www.cpan.org]]]])",
+        
+        "(https://www.cpan.org})",
+        "(https://www.cpan.org}})",
+        "(https://www.cpan.org}}})",
+        "(https://www.cpan.org}}}})",
+        
+        "(https://www.cpan.org}])",
+        "(https://www.cpan.org)])",
+        "(https://www.cpan.org)})",
+        
+        "(https://www.cpan.org]]])",
+        "(https://www.cpan.org]}])",
+        "(https://www.cpan.org)}]})",
+        "(https://www.cpan.org))}]})",
+        "(https://www.cpan.org))))}]})",
+        "(https://www.cpan.org))))}]}))",
+        "(https://www.cpan.org))))}])}))",
 
-        # ! FAILED:
-        # , "(https://www.cpan.org)[)]"
-        
-        # ! FAILED:
-        # , "(https://www.cpan.org)))"
-        # , "(https://www.cpan.org))]"
-        # , "(https://www.cpan.org))("
-        # , "(https://www.cpan.org)')'"
-        # , "(https://www.cpan.org)\")\""
-        # , "(https://www.cpan.org)'\")\"'"
+        # FAILED (?)
+        # "(https://www.cpan.org)))",
+        # "(https://www.cpan.org))}",
+        # "(https://www.cpan.org))]",
+        # "(https://www.cpan.org))(",
+        # "(https://www.cpan.org)[}",
+        # "(https://www.cpan.org)}[",
+        # "(https://www.cpan.org)[)]",
+        # "(https://www.cpan.org)')'",
+        # "(https://www.cpan.org);;)}",
+        # "(https://www.cpan.org);;)]",
+        # "(https://www.cpan.org]]]])]",
+        # "(https://www.cpan.org)\")\"",
+        # "(https://www.cpan.org)'\")\"'",
+        # "(https://www.cpan.org);;)]}.),)'",
+        # "(https://www.cpan.org);;)]}.),)..",
+        # "(https://www.cpan.org);;)]}.),)''",
+        # "(https://www.cpan.org);;)]]}.),)'\"]",
     ]
-
-    # , "https://www.perlmonks.org?&}"
-    # , "https://www.perlmonks.org?&)"
-    # , "https://medium.com?cache=cheese]"
 
     , [
         "https://www.perlmonks.org?gov=--3&&perl_v=5006",
@@ -201,6 +293,31 @@ my @tasks = (
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///\"\"",
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///''",
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///.............",
+    ]
+
+    , [
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar}",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]}",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]]",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]})",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]..",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar]]})",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
+
+        # FAILED (?)
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{.",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar['",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[,",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(]}",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[\"",
+        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(\"",
     ]
 
     , [
