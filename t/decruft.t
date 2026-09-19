@@ -19,7 +19,7 @@ sub run_tasks {
             ? @$t
             : ($t, $t);
     
-        TEST:foreach my $str (@tests) {
+        foreach my $str (@tests) {
             foreach my $r (@$replacements) {
                 my %tests;
 
@@ -35,9 +35,7 @@ sub run_tasks {
 
                 foreach my $desc (keys %tests) {
                     my $result = $tests{$desc}->decruft($str);
-                    
-                    is($result, $expected, "V='$str', $desc");
-                    next TEST unless $result eq $expected
+                    is($result, $expected, "V='$str', $desc")
                 }
             }
         }
