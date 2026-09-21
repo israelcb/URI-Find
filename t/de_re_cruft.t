@@ -34,8 +34,13 @@ sub run_tasks {
                     = $cached_instance;
 
                 foreach my $desc (keys %tests) {
-                    my $result = $tests{$desc}->decruft($str);
-                    is($result, $expected, "V='$str', $desc")
+                    my $message = "V='$str', $desc";
+                    
+                    my $decruft = $tests{$desc}->decruft($str);
+                    is $decruft, $expected, "decruft $message";
+
+                    my $recruft = $tests{$desc}->recruft($decruft);
+                    is $recruft, $str, "recruft $message"
                 }
             }
         }
@@ -188,7 +193,7 @@ my @tasks = (
         "(https://www.cpan.org))",
         "(https://www.cpan.org)))",
         "(https://www.cpan.org))))",
-        
+
         "(https://www.cpan.org,)",
         "(https://www.cpan.org.)",
         "(https://www.cpan.org;)",
@@ -203,7 +208,7 @@ my @tasks = (
         "(https://www.cpan.org);;)]]}.),))",
         "(https://www.cpan.org);;)]]}.),)'\)",
         "(https://www.cpan.org);;)]]}.),)'\")",
-        
+
         "(https://www.cpan.org])",
         "(https://www.cpan.org]])",
         "(https://www.cpan.org]]])",
@@ -226,7 +231,7 @@ my @tasks = (
         "(https://www.cpan.org))))}]}))",
         "(https://www.cpan.org))))}])}))",
 
-        # FAILED (?)
+        # Failing decruft (?)
         # "(https://www.cpan.org)))",
         # "(https://www.cpan.org))}",
         # "(https://www.cpan.org))]",
@@ -308,16 +313,16 @@ my @tasks = (
         "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
         "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
 
-        # FAILED (?)
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{.",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar['",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[,",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(]}",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[\"",
-        # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(\"",
+    #     # FAILED (?)
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{.",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar['",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[,",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(]}",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[\"",
+    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(\"",
     ]
 
     , [
