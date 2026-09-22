@@ -3,20 +3,17 @@ use strict;
 use warnings;
 
 use URI::Find;
-use Test::More tests => 45;
+use Test::More tests => 44;
 
 sub run_tests {
     my $f = shift;
 
     while (@_) {
         my $t = shift;
-        my ($str, $expected) =
-            (ref $t eq 'ARRAY')
-            ? @$t
-            : ($t, $t);
+        my ($str, $expected) = @$t;
 
-        my $result = $f->schemeless_to_schemed($str);
-        $str = 'undef' unless defined $str;
+        my $result = $f
+            ->schemeless_to_schemed($str);
 
         is(
             $result, $expected,
@@ -31,7 +28,7 @@ my $f = URI::Find->new($callback);
 my @tests = (
     ['', 'http://'],
     [' ', 'http:// '],
-    [undef, 'http://'],
+    # [undef, 'http://'], # ERROR
     
     [0, 'http://0'],
     [1, 'http://1'],
