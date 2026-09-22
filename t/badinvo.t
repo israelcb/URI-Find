@@ -2,8 +2,9 @@
 use strict;
 use warnings;
 
+use URI::Find::Schemeless;
 use URI::Find qw/find_uris/;
-use Test::More tests => 38;
+use Test::More tests => 45;
 
 sub test_badinvo {
     my $test_cb = shift;
@@ -21,24 +22,24 @@ sub test_badinvo {
 
 test_badinvo(
     sub { URI::Find->new() }
-    , 'new(1) called with no arguments'
+    , 'URI::Find::new(1) called with no arguments'
     , 'Bogus invocation of URI::Find::new'
 );
 
 test_badinvo(
     sub { URI::Find->new(1..1) }
-    , 'new(1) called with one argument'
+    , 'URI::Find::new(1) called with one argument'
 );
 
 test_badinvo(
     sub { URI::Find->new(1..2) }
-    , 'new(1) called with two arguments'
+    , 'URI::Find::new(1) called with two arguments'
     , 'Bogus invocation of URI::Find::new'
 );
 
 test_badinvo(
     sub { URI::Find->new(1..3) }
-    , 'new(1) called with three arguments'
+    , 'URI::Find::new(1) called with three arguments'
     , 'Bogus invocation of URI::Find::new'
 );
 
@@ -238,6 +239,56 @@ test_badinvo(
     sub { $f->_is_uri(1..2) }
     , '_is_uri(1) called with two arguments'
     , 'Bogus invocation of URI::Find::_is_uri'
+);
+
+test_badinvo(
+    sub { URI::Find::Schemeless->new() }
+    , 'URI::Find::Schemeless::new(1) called with no arguments'
+    , 'Bogus invocation of URI::Find::new'
+);
+
+test_badinvo(
+    sub { URI::Find::Schemeless->new(1..1) }
+    , 'URI::Find::Schemeless::new(1) called with one argument'
+);
+
+test_badinvo(
+    sub { URI::Find::Schemeless->new(1..2) }
+    , 'URI::Find::Schemeless::new(1) called with two arguments'
+    , 'Bogus invocation of URI::Find::new'
+);
+
+$f = URI::Find::Schemeless
+    ->new(sub { $_[0] });
+
+test_badinvo(
+    sub { $f->schemeless_uri_re() }
+    , 'URI::Find::Schemeless::schemeless_uri_re(0)'
+    . ' called with no arguments'
+);
+
+test_badinvo(
+    sub { $f->schemeless_uri_re(1..1) }
+    , 'URI::Find::Schemeless::schemeless_uri_re(0)'
+    . ' called with one argument'
+        
+    , 'Bogus invocation of'
+    . ' URI::Find::Schemeless::schemeless_uri_re'
+);
+
+test_badinvo(
+    sub { $f->top_level_domain_re() }
+    , 'URI::Find::Schemeless::top_level_domain_re(0)'
+    . ' called with no arguments'
+);
+
+test_badinvo(
+    sub { $f->top_level_domain_re(1..1) }
+    , 'URI::Find::Schemeless::top_level_domain_re(0)'
+    . ' called with one argument'
+
+    , 'Bogus invocation of'
+    . ' URI::Find::Schemeless::top_level_domain_re'
 );
 
 done_testing();
