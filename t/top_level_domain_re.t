@@ -227,7 +227,7 @@ my @non_match_tests = (
     , 'Ju5t v151t h+t+t+p://g00g_l3.c4'
     , q|รายละเอียดเพิ่มเติมที่ h./1c40.43r0/t"h|
     , q|रजिस्टर करें h^t&t_p://b-t'c"l.বাংলা पर।|
-    , q|T4b-[[p]]r3f1x3d: 	t35t1n{g}.테스트|
+    , "T4b-[[p]]r3f1x3d:\tt35t1n{g}.테스트"
     , '@LL C@P$: C|NN!C.中國/WH9!$?D9M@!N=Y&$Y'
     , q|4n*d 8r4c-k3t5: [h=k1rc.香港/8r4c+k3t5]|
     , q|C9n\$ul'Y&z ://\@:n:rY.المغرب p9ur p+l+|
