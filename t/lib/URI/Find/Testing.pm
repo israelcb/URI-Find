@@ -1,6 +1,6 @@
 package URI::Find::Testing;
+use base 'Exporter';
 
-our @ISA = 'Exporter';
 our @EXPORT = qw/
     simple_escape
     get_filter_tests
