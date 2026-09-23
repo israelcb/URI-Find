@@ -4,6 +4,7 @@ our @ISA = 'Exporter';
 our @EXPORT = qw/
     simple_escape
     get_filter_tests
+    get_non_escape_filter_tests
 /;
 
 my @replacements = (
@@ -200,6 +201,11 @@ sub get_filter_tests {
     }
 
     @tests
+}
+
+sub get_non_escape_filter_tests {
+    my @tests = get_filter_tests();
+    grep { $$_[1] !~ /&/o } @tests
 }
 
 sub simple_escape {
