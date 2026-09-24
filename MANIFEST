@@ -18,7 +18,17 @@ t/html.t
 t/is_schemed.t
 t/load-schemeless.t
 t/rfc3986_appendix_c.t
+t/badinvo.t
+t/cruft_set.t
+t/de_re_cruft.t
+t/find_uris.t
+t/schemeless_to_schemed.t
+t/schemeless_uri_re.t
+t/top_level_domain_re.t
+t/uri_re.t
+t/uric_set.t
 t/urifind/find.t
 t/urifind/pod.t
 t/urifind/sciencenews
+t/lib/URI/Find/Testing.pm
 TODO
