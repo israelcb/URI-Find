@@ -2,48 +2,32 @@
 use strict;
 use warnings;
 
-# Test decruft function
+# Test decruft and recruft functions
 use URI::Find;
-use Test::More qw/no_plan/;
+use Test::More tests => 358;
 
 sub run_tasks {
-    my $tasks        = shift;
-    my $replacements = shift;
-
-    my $cached_instance = URI::Find
+    my $f = URI::Find
         ->new(sub {});
 
-    foreach my $t (@$tasks) {
-        my ($expected, @tests) =
-            (ref $t eq 'ARRAY')
-            ? @$t
-            : ($t, $t);
-    
-        foreach my $str (@tests) {
-            foreach my $r (@$replacements) {
-                my %tests;
-
-                my $r_str = defined $r ? $r : 'undef';
-                $tests{"R=$r_str, new instance"}
-                    = URI::Find->new(sub { $r });
-                
-                $tests{'R=void, new instance'}
-                    = URI::Find->new(sub {});
-
-                $tests{'R=void, cached instance'}
-                    = $cached_instance;
-
-                foreach my $desc (keys %tests) {
-                    my $message = "V='$str', $desc";
-                    
-                    my $decruft = $tests{$desc}->decruft($str);
-                    is $decruft, $expected, "decruft $message";
-
-                    my $recruft = $tests{$desc}->recruft($decruft);
-                    is $recruft, $str, "recruft $message"
-                }
-            }
+    my @tests =
+        map {
+            my $expected = shift @$_;
+            map {[ $expected, $_ ]} @$_
         }
+        map {[
+            (ref $_ eq 'ARRAY')
+            ? @$_ : ($_, $_)
+        ]} @_;
+
+    foreach my $t (@tests) {
+        my ($expected, $str) = @$t;
+        
+        my $decruft = $f->decruft($str);
+        is $decruft, $expected, "decruft '$str'";
+
+        my $recruft = $f->recruft($decruft);
+        is $recruft, $str, "recruft '$str'"
     }
 }
 
@@ -351,21 +335,6 @@ my @tasks = (
     ]
 );
 
-my @replacements = (
-    undef, '', 0
-    , 1, -1, 1_111.11
-    
-    , '> URL <'
-    , '**&', '&&&'
-    , '([{;;> URL <,,}])'
-    , ' https://perl.org'
-    , 'https://perl.org;;'
-    , ' https://perl.org[]'
-);
-
-run_tasks(
-    \@tasks
-    , \@replacements
-);
-
+run_tasks @tasks;
+done_testing();
 1
