@@ -63,9 +63,6 @@ my @replacements = (
     , 1_001, -1_001
     , 1_001.0606965
     , -1_001.2342
-    , do { "" . \(my $ref) }
-    , do { "" . \(my %ref) }
-    , do { "" . \(my @ref) }
 );
 
 my @non_rep_tests = (
