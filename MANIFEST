@@ -16,7 +16,7 @@ t/filter.t
 t/Find.t
 t/html.t
 t/is_schemed.t
-t/load-schemeless.t
+t/load_schemeless.t
 t/rfc3986_appendix_c.t
 t/badinvo.t
 t/cruft_set.t
