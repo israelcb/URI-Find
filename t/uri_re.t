@@ -16,7 +16,7 @@ is(
 
 my $scheme_re = '(?-xism:[a-zA-Z][a-zA-Z0-9\\+]*)';
 my $uric_re   = $f->uric_set;
-(my $uric_cheat_re = $uric_re) =~ s/://g;
+(my $uric_cheat_re = $uric_re) =~ s/\\://;
 
 my $expected = sprintf
     '%s:[%s][%s#]*'
