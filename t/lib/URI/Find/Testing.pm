@@ -183,6 +183,13 @@ my @rep_tests = ([
     "Non-URL nested inside brackets"
     , q{<a href="foo://example&.com">}
     , q{<a href="foo://example&amp;.com">}
+]
+
+# Issue #17 (https://github.com/schwern/URI-Find/issues/17)
+,[
+    "Non-URL, with one backslash after the schema, instead of two"
+    , q{ http:\/example.com }
+    , q{ http:\/example.com }
 ]);
 
 sub get_filter_tests {
