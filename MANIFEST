@@ -27,6 +27,9 @@ t/schemeless_uri_re.t
 t/top_level_domain_re.t
 t/uri_re.t
 t/uric_set.t
+t/issues/issue_11_mephinet.t
+t/issues/issue_12_godders.t
+t/issues/issue_17_lazarus1906.t
 t/urifind/find.t
 t/urifind/pod.t
 t/urifind/sciencenews
