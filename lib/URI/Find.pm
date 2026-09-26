@@ -422,7 +422,7 @@ schemed, false for schemeless.
 sub is_schemed {
     @_ == 2 || __PACKAGE__->badinvo;
     my($self, $uri) = @_;
-    return scalar $uri =~ /^<?$schemeRe:/;
+    return URI->new($uri)->has_recognized_scheme;
 }
 
 =item I<badinvo>
