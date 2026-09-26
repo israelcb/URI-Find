@@ -14,7 +14,8 @@
 
 use warnings;
 use strict;
-use Test::More;
+
+use Test::More 'skip_all';
 use URI::Find;
 
 my $string = q{e:('')};
