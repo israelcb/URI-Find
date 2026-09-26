@@ -15,7 +15,7 @@
 use warnings;
 use strict;
 
-use Test::More 'skip_all';
+use Test::More tests => 2;
 use URI::Find;
 
 my $string = q{e:('')};
@@ -24,7 +24,14 @@ my $matches = 0;
 
 URI::Find->new(sub{ $matches++ })->find(\$string);
 
-is($string, $original, 'String unchanged when there are no matches');
+SKIP: {
+    skip 'Still failing after is_schemed fix', 1;
+    is(
+        $string, $original
+        , 'String unchanged when there are no matches'
+    );
+}
+
 is($matches, 0, 'No URIs matched');
 
-done_testing;
+done_testing();
