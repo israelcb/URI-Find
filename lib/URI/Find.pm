@@ -277,6 +277,15 @@ sub full_uri_re {
     return sprintf '(?:%s|%s)', $self->uri_re, $self->schemeless_uri_re;
 }
 
+sub is_uri {
+    @_ == 2 || __PACKAGE__->badinvo;
+    my $self = shift;
+    my $maybe_uri = shift;
+
+    my $uri_re = $self->full_uri_re;
+    return $maybe_uri =~ /^$uri_re$/;
+}
+
 =item B<uric_set>
 
   my $uric_set = $self->uric_set;
