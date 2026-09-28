@@ -36,7 +36,7 @@ my($uricCheat) = __PACKAGE__->uric_set;
 $uricCheat =~ s{ \\ \: }{}mx; # Issue #17
 
 # Identifying characters accidentally picked up with a URI.
-my($cruftSet) = q{])\},.'";}; #'#
+my($cruftSet) = q{<>[]()\{\},.'";}; #'#
 
 
 =head1 NAME
@@ -329,52 +329,176 @@ This method takes a candidate URI and strips off any cruft it finds.
 
 =cut
 
-my %balanced_cruft = (
-    '('         => ')',
-    '{'         => '}',
-    '['         => ']',
-    '"'         => '"',
-    q[']        => q['],
-);
-
 sub decruft {
     @_ == 2 || __PACKAGE__->badinvo;
     my($self, $orig_match) = @_;
 
-    $self->{start_cruft} = '';
-    $self->{end_cruft} = '';
+    $self->{start_cruft} = [];
+    $self->{end_cruft} = [];
 
-    if( $orig_match =~ s/([\Q$cruftSet\E]+)$// ) {
-        # urls can end with HTML entities if found in HTML so let's put back semicolons
-        # if this looks like the case
-        my $cruft = $1;
-        if( $cruft =~ /^;/ && $orig_match =~ /\&(\#[1-9]\d{1,3}|[a-zA-Z]{2,8})$/) {
-            $orig_match .= ';';
-            $cruft =~ s/^;//;
-        }
-
-        while( my($open, $close) = each %balanced_cruft ) {
-            $self->recruft_balanced(\$orig_match, \$cruft, $open, $close);
-        }
-
-        $self->{end_cruft} = $cruft if $cruft;
+    if ($orig_match =~ /([\Q$cruftSet\E])$/) {
+        $self->recruft_balanced(\$orig_match);
     }
 
     return $orig_match;
 }
 
+my $opennings = q/<({["'/;
+my $is_openning = qr/[\Q$opennings\E]/x;
+
+my $next_openning = qr/^
+    ([^\Q$opennings\E]*)
+    ([\Q$opennings\E]?)
+    (.*)
+$/sx;
+
+my $closings = q/>)}]"'/;
+my $is_closing = qr/[\Q$closings\E]/x;
+
+my $next_closing = qr/^
+    ([^\Q$closings\E]*)
+    ([\Q$closings\E]?)
+    (.*)
+$/sx;
+
+my %brackets = qw/
+    < > ( ) [ ] { } " " ' '
+/;
 
 sub recruft_balanced {
     my $self = shift;
-    my($orig_match, $cruft, $open, $close) = @_;
+    my $match = shift;
 
-    my $open_count  = () = $$orig_match =~ m{\Q$open}g;
-    my $close_count = () = $$orig_match =~ m{\Q$close}g;
-
-    if ( $$cruft =~ /\Q$close\E$/ && $open_count == ( $close_count + 1 ) ) {
-        $$orig_match .= $close;
-        $$cruft =~ s/\Q$close\E$//;
+    my @uri;
+    foreach my $r ($next_openning, $next_closing) {
+        my @m = $$match =~ /$r/ or next;
+        (my $cruft, my $bracket, $$match) = @m;
+        
+        push @uri, [$cruft, 0] unless $cruft eq '';
+        last unless $bracket;
+        
+        push @uri, [$bracket, 1];
+        redo
     }
+
+    @uri = [ $$match, 0 ] if @uri == 0;
+    undef $$match;
+
+    $self->{start_cruft} = \my @stt;
+    $self->{end_cruft} = \my @end;
+
+    while (my $u = shift @uri) {
+        my ($str) = @$u;
+        
+        unless (length $str > 1) {
+            push @stt, $u;
+            next
+        }
+
+        if ($$u[0] =~ s/^([\Q$cruftSet\E]+)//) {
+            push @stt, [$1, 0];
+            redo
+        }
+        
+        if ($$u[0] =~ s/([\Q$cruftSet\E]+)$//) {
+            unshift @uri, [$1, 0];
+            redo
+        }
+
+        if ($self->is_uri($str)) {
+            $$match = $str;
+            @end = @uri;
+            last
+        }
+
+        push @stt, $u;
+    }
+
+    unless (defined $$match) {
+        $$match = join '', map { $$_[0] } @stt;
+        @stt = ();
+        return
+    }
+
+    my @single;
+    for (my $i =0; $i <= $#stt; $i++) {
+        my $u = $stt[$i];
+        my ($str) = @$u;
+        
+        if (length $str > 1) {
+            $$u[0] =~ s/(.)//s;
+            splice @stt, $i, 0, [$1, 0];
+            redo
+        }
+
+        do { push @single, $u; next }
+            if $str =~ /$is_openning/;
+
+        next unless $str =~ /$is_closing/;
+        
+        my $l = $single[$#single];        
+        if ($l and $brackets{$$l[0]} eq $str) {
+            pop @single;
+            $$l[1] = 0
+        }
+    }
+
+    my @single_after_uri;
+    my $uri_closed = 0;
+    my $uri_ended = 0;
+
+    @end =
+        map {[ $_, 0 ]}
+        split //,
+        join '',
+        map { $$_[0] }
+        @end;
+
+    for (my $i =0; $i <= $#end; $i++) {
+        my $u = $end[$i];
+        my ($str) = @$u;
+        
+        if (length $str > 1) {
+            $$u[0] =~ s/(.)(.+)/$1/s;
+            splice @end, $i, 0, [$2, 0];
+            redo
+        }
+
+        if ($str =~ /$is_openning/ and $str !~ /["']/) {
+            push @single, $u;
+            push @single_after_uri, $u;
+            next
+        }
+        
+        if ($str =~ /$is_closing/) {
+            my $l = $single_after_uri[$#single_after_uri];
+            if ($l and $brackets{$$l[0]} eq $str) {
+                pop @single;
+                pop @single_after_uri;
+
+                $$l[1] = $$u[1] = (!$uri_ended and !$uri_closed);
+                next;
+            }
+
+            if (@single_after_uri == 0) {
+                $l = $single[$#single];
+                if ($l and $brackets{$$l[0]} eq $str) {
+                    $uri_closed = 1;
+                    
+                    pop @single;
+                    $$u[1] = 1;
+                    next
+                }
+            }
+        }
+
+        $uri_ended |= $str =~ /[\Q$cruftSet\E]/;
+        $$u[1] = !$uri_ended;
+    }
+
+    $$_[1] = 0 foreach @single;
+    $$match  = $$_[0] . $$match foreach reverse grep { $$_[1] } @stt;
+    $$match .= $$_[0] foreach grep { $$_[1] } @end;
 
     return;
 }
@@ -396,14 +520,23 @@ sub recruft {
     @_ == 2 || __PACKAGE__->badinvo;
     my($self, $uri) = @_;
 
-    my $stt = $self->{start_cruft};
-    my $end = $self->{end_cruft};
+    my ($stt, $end) =
+        map { join '', map { $$_[0] } @$_ }
+        $$self{start_cruft}, $$self{end_cruft};
 
     if (my $escape_func = $self->{escape_func}) {
         $end = $escape_func->($end);
     }
 
-    return $stt . $uri . $end;
+    foreach my $chr (map { $$_[0] } grep { $$_[1] } @{$$self{start_cruft}}) {
+        $uri =~ s/^\Q$chr\E//
+    }
+
+    foreach my $chr (reverse map { $$_[0] } grep { $$_[1] } @{$$self{end_cruft}}) {
+        $uri =~ s/\Q$chr\E$//
+    }
+    
+    return join $uri, $stt, $end;
 }
 
 =item B<schemeless_to_schemed>
