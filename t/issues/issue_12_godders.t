@@ -24,14 +24,12 @@ my $matches = 0;
 
 URI::Find->new(sub{ $matches++ })->find(\$string);
 
-SKIP: {
-    skip 'Still failing after is_schemed fix', 1;
-    is(
-        $string, $original
-        , 'String unchanged when there are no matches'
-    );
-}
+is(
+    $string, $original
+    , 'String unchanged when there are no matches'
+);
 
 is($matches, 0, 'No URIs matched');
 
 done_testing();
+1
