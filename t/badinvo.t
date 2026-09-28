@@ -4,7 +4,7 @@ use warnings;
 
 use URI::Find::Schemeless;
 use URI::Find qw/find_uris/;
-use Test::More tests => 45;
+use Test::More tests => 47;
 
 sub test_badinvo {
     my $test_cb = shift;
@@ -193,6 +193,17 @@ test_badinvo(
     sub { $f->is_schemed() }
     , 'is_schemed(1) called with no arguments'
     , 'Bogus invocation of URI::Find::is_schemed'
+);
+
+test_badinvo(
+    sub { $f->full_uri_re() }
+    , 'full_uri_re(0) called with no arguments'
+);
+
+test_badinvo(
+    sub { $f->full_uri_re(1..1) }
+    , 'full_uri_re(0) called with one argument'
+    , 'Bogus invocation of URI::Find::full_uri_re'
 );
 
 test_badinvo(

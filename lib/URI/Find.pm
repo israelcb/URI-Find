@@ -129,7 +129,7 @@ sub find {
     my $uri_cand;
     my $uri;
 
-    my $uriRe = sprintf '(?:%s|%s)', $self->uri_re, $self->schemeless_uri_re;
+    my $uriRe = $self->full_uri_re;
 
     $$r_text =~ s{ (.*?) (?:(<(?:URL:)?)(.+?)(>)|($uriRe)) | (.+?)$ }{
         my $replace = '';
@@ -268,6 +268,13 @@ sub schemeless_uri_re {
     @_ == 1 || __PACKAGE__->badinvo;
     my($self) = shift;
     return qr/\b\B/; # match nothing
+}
+
+sub full_uri_re {
+    @_ == 1 || __PACKAGE__->badinvo;
+    my $self = shift;
+    
+    return sprintf '(?:%s|%s)', $self->uri_re, $self->schemeless_uri_re;
 }
 
 =item B<uric_set>
