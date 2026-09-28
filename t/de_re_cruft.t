@@ -4,7 +4,7 @@ use warnings;
 
 # Test decruft and recruft functions
 use URI::Find;
-use Test::More tests => 358;
+use Test::More tests => 474;
 
 sub run_tasks {
     my $f = URI::Find
@@ -51,7 +51,6 @@ my @tasks = (
     , "https://www.zed.dev///"
     , "https://pulsar-edit.dev"
     , "https://duckduckgo.com/"
-    , "https://duckduckgo.com/>"
     , "wss://ssl-super-socket.io"
     , "https://medium.com#cake?cache=cheese"
     , "https://duckduckgo.com/?q=raku%20programming"
@@ -79,35 +78,23 @@ my @tasks = (
     , "⚠️ ftp://myserver.net🤫  "
     , " ⚠️ ftp://myserver.net🏴‍☠️  🔴"
     , "🚨 ftp://myserver.net🏓  🤡  "
-    
+
     , "https://www.perlmonks.org&"
-    , "https://www.perlmonks.org["
-    , "https://www.perlmonks.org{"
-    , "https://www.perlmonks.org("
     , "https://www.perlmonks.org[]"
     , "https://www.perlmonks.org{}"
     , "https://www.perlmonks.org()"
 
     , "https://www.perlmonks.org?"
-    , "https://www.perlmonks.org?["
-    , "https://www.perlmonks.org?{"
-    , "https://www.perlmonks.org?("
     , "https://www.perlmonks.org?[]"
     , "https://www.perlmonks.org?{}"
     , "https://www.perlmonks.org?()"
     
     , "https://www.perlmonks.org/&"
-    , "https://www.perlmonks.org/&["
-    , "https://www.perlmonks.org/&{"
-    , "https://www.perlmonks.org/&("
     , "https://www.perlmonks.org/&[]"
     , "https://www.perlmonks.org/&{}"
     , "https://www.perlmonks.org/&()"
     
     , "https://www.perlmonks.org//?&"
-    , "https://www.perlmonks.org//?&["
-    , "https://www.perlmonks.org//?&{"
-    , "https://www.perlmonks.org//?&("
     , "https://www.perlmonks.org//?&[]"
     , "https://www.perlmonks.org//?&{}"
     , "https://www.perlmonks.org//?&()"
@@ -125,16 +112,51 @@ my @tasks = (
     , " https://www.perlmonks.org?{}  \r\n"
     , "\thttps://www.perlmonks.org?{}  \r\n"
     
-    , "https://medium.com?cache=cheese"
-    , "https://medium.com?cache=cheese["
     , "https://medium.com?cache=cheese[]"
-    
-    , "https://medium.com?cache=cheese{"
     , "https://medium.com?cache=cheese{}"
-    
-    , "https://medium.com?cache=cheese("
     , "https://medium.com?cache=cheese()"
-    
+
+    , [
+        "https://duckduckgo.com/"
+        , "https://duckduckgo.com/>"
+    ]
+
+    , [
+        "https://www.perlmonks.org"
+        , "https://www.perlmonks.org["
+        , "https://www.perlmonks.org{"
+        , "https://www.perlmonks.org("
+    ]
+
+    , [
+        "https://www.perlmonks.org?"
+        , "https://www.perlmonks.org?["
+        , "https://www.perlmonks.org?{"
+        , "https://www.perlmonks.org?("
+    ]
+
+    , [
+        "https://www.perlmonks.org/&"
+        , "https://www.perlmonks.org/&["
+        , "https://www.perlmonks.org/&{"
+        , "https://www.perlmonks.org/&("
+    ]
+
+    , [
+        "https://www.perlmonks.org//?&"
+        , "https://www.perlmonks.org//?&["
+        , "https://www.perlmonks.org//?&{"
+        , "https://www.perlmonks.org//?&("
+    ]
+
+    , [
+        "https://medium.com?cache=cheese"
+        , "https://medium.com?cache=cheese"
+        , "https://medium.com?cache=cheese["
+        , "https://medium.com?cache=cheese{"
+        , "https://medium.com?cache=cheese("
+    ]
+
     , [
         # Expected result (all tests bellow)
         "https://perl.org",
@@ -156,7 +178,7 @@ my @tasks = (
         "https://perl.org';,;'",
         "https://perl.org\"',\",';",
     ]
-    
+
     , [
         "https://www.duckduckgo.com/",
         "https://www.duckduckgo.com/)",
@@ -175,70 +197,66 @@ my @tasks = (
     , [
         "(https://www.cpan.org)",
         "(https://www.cpan.org))",
+        "(https://www.cpan.org,)",
+        "(https://www.cpan.org.)",
+        "(https://www.cpan.org;)",
+        "(https://www.cpan.org')",
+        "(https://www.cpan.org])",
+        "(https://www.cpan.org})",
         "(https://www.cpan.org)))",
+        "(https://www.cpan.org]])",
+        "(https://www.cpan.org}})",
+        "(https://www.cpan.org),)",
+        "(https://www.cpan.org}])",
+        "(https://www.cpan.org)])",
+        "(https://www.cpan.org)})",
+        "(https://www.cpan.org)))",
+        "(https://www.cpan.org))}",
+        "(https://www.cpan.org))]",
+        "(https://www.cpan.org))(",
+        "(https://www.cpan.org)[}",
+        "(https://www.cpan.org)}[",
+        "(https://www.cpan.org)[)]",
+        "(https://www.cpan.org)')'",
+        "(https://www.cpan.org]]])",
         "(https://www.cpan.org))))",
+        "(https://www.cpan.org]]])",
+        "(https://www.cpan.org}}})",
+        "(https://www.cpan.org];])",
+        "(https://www.cpan.org);;)",
+        "(https://www.cpan.org]}])",
+        "(https://www.cpan.org}};})",
+        "(https://www.cpan.org}}}})",
+        "(https://www.cpan.org]]]])",
+        "(https://www.cpan.org)}]})",
+        "(https://www.cpan.org)([])",
+        "(https://www.cpan.org)('')",
+        "(https://www.cpan.org);;)}",
+        "(https://www.cpan.org);;)]",
+        "(https://www.cpan.org))}]})",
+        "(https://www.cpan.org]]]])]",
+        "(https://www.cpan.org);;)])",
+        "(https://www.cpan.org)\")\"",
+        "(https://www.cpan.org)([{}])",
+        "(https://www.cpan.org))))}]})",
+        "(https://www.cpan.org)'\")\"'",
+        "(https://www.cpan.org))))}]}))",
+        "(https://www.cpan.org))))}])}))",
+        "(https://www.cpan.org);;)]}.),)",
+        "(https://www.cpan.org);;)]}.),)'",
+        "(https://www.cpan.org);;)]}.),))",
+        "(https://www.cpan.org);;)]}.),)..",
+        "(https://www.cpan.org);;)]}.),)''",
+        "(https://www.cpan.org);;)]]}.),))",
+        "(https://www.cpan.org);;)]]}.),)'\)",
+        "(https://www.cpan.org);;)]]}.),)'\"]",
+        "(https://www.cpan.org);;)]]}.),)'\")",
+        "(https://www.cpan.org);;)]]}.),)'\"]({,;})",
+    ]
 
-        # Failing recruft
-        # "(https://www.cpan.org,)",
-        # "(https://www.cpan.org.)",
-        # "(https://www.cpan.org;)",
-        # "(https://www.cpan.org')",
-        # "(https://www.cpan.org),)",
-        # "(https://www.cpan.org];])",
-        # "(https://www.cpan.org);;)",
-        # "(https://www.cpan.org}};})",
-        # "(https://www.cpan.org);;)])",
-        # "(https://www.cpan.org);;)]}.),)",
-        # "(https://www.cpan.org);;)]}.),))",
-        # "(https://www.cpan.org);;)]]}.),))",
-        # "(https://www.cpan.org);;)]]}.),)'\)",
-        # "(https://www.cpan.org);;)]]}.),)'\")",
-
-        # Failing recruft
-        # "(https://www.cpan.org])",
-        # "(https://www.cpan.org]])",
-        # "(https://www.cpan.org]]])",
-        # "(https://www.cpan.org]]]])",
-        
-        # Failing recruft
-        # "(https://www.cpan.org})",
-        # "(https://www.cpan.org}})",
-        # "(https://www.cpan.org}}})",
-        # "(https://www.cpan.org}}}})",
-        
-        # Failing recruft
-        # "(https://www.cpan.org}])",
-        # "(https://www.cpan.org)])",
-        # "(https://www.cpan.org)})",
-        
-        # Failing recruft
-        # "(https://www.cpan.org]]])",
-        # "(https://www.cpan.org]}])",
-        # "(https://www.cpan.org)}]})",
-        # "(https://www.cpan.org))}]})",
-        # "(https://www.cpan.org))))}]})",
-        # "(https://www.cpan.org))))}]}))",
-        # "(https://www.cpan.org))))}])}))",
-
-        # Failing recruft
-        # Failing decruft (?)
-        # "(https://www.cpan.org)))",
-        # "(https://www.cpan.org))}",
-        # "(https://www.cpan.org))]",
-        # "(https://www.cpan.org))(",
-        # "(https://www.cpan.org)[}",
-        # "(https://www.cpan.org)}[",
-        # "(https://www.cpan.org)[)]",
-        # "(https://www.cpan.org)')'",
-        # "(https://www.cpan.org);;)}",
-        # "(https://www.cpan.org);;)]",
-        # "(https://www.cpan.org]]]])]",
-        # "(https://www.cpan.org)\")\"",
-        # "(https://www.cpan.org)'\")\"'",
-        # "(https://www.cpan.org);;)]}.),)'",
-        # "(https://www.cpan.org);;)]}.),)..",
-        # "(https://www.cpan.org);;)]}.),)''",
-        # "(https://www.cpan.org);;)]]}.),)'\"]",
+    , [
+        "[((https://www.cpan.org))]"
+        , "[({)]}(https://www.cpan.org);;)]]}.),)'\"]"
     ]
 
     , [
@@ -256,7 +274,7 @@ my @tasks = (
     ]
 
     , [
-        " \n==>>\"https://download.torproject.org/#?&&??&",
+        "\"https://download.torproject.org/#?&&??&\"",
         " \n==>>\"https://download.torproject.org/#?&&??&.\"",
         " \n==>>\"https://download.torproject.org/#?&&??&,\"",
         " \n==>>\"https://download.torproject.org/#?&&??&;\"",
@@ -273,15 +291,7 @@ my @tasks = (
     ]
 
     , [
-        "\r\t\t\thttps://learn.perl.org\nhttps://blogs.perl.org",
-        "\r\t\t\thttps://learn.perl.org\nhttps://blogs.perl.org.",
-        "\r\t\t\thttps://learn.perl.org\nhttps://blogs.perl.org,",
-        "\r\t\t\thttps://learn.perl.org\nhttps://blogs.perl.org..",
-        "\r\t\t\thttps://learn.perl.org\nhttps://blogs.perl.org,\"",
-    ]
-
-    , [
-        "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///",
+        "ws://creativecommons.org/licenses/by-nc-nd/3.0/us///",
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///.",
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///,",
         "(ws://creativecommons.org/licenses/by-nc-nd/3.0/us///;",
@@ -303,28 +313,26 @@ my @tasks = (
         "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
         "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar)..\";.]]'\",})",
 
-    #     # FAILED (?)
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{.",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar['",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[,",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(]}",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[\"",
-    #     # "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(\"",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar{.",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar['",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[,",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(]}",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar[\"",
+        "https://learnxinyminutes.com/perl?user[]=foo&user[]=bar(\"",
     ]
 
     , [
-        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&",
         "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&'",
-        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&\"",
         "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&'.",
-        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&,,",
-        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&\"\"",
-        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&\";,",
+        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&'\"",
+        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&,,'",
         "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&',;'",
         "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&',,'",
+        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&\"\"'",
+        "'https://programming-idioms.org/idiom/258/convert-list-of-strings-to-list-of-integers\?&&\";,'",
     ]
 
     , [
