@@ -188,19 +188,29 @@ sub find {
 sub _uri_filter {
     my($self, $orig_match) = @_;
 
+    # urls can end with HTML entities if found in HTML so let's put back semicolons
+    # if this looks like the case
+    my $cruft = '';
+    if ($orig_match =~ s/(\&\#[1-9]\d{1,3}|[a-zA-Z]{2,8})(;)$/$1/) {
+        $cruft = $2;
+    }
+
     # A heuristic.  Often you'll see things like:
     # "I saw this site, http://www.foo.com, and its really neat!"
     # or "Foo Industries (at http://www.foo.com)"
     # We want to avoid picking up the trailing paren, period or comma.
     # Of course, this might wreck a perfectly valid URI, more often than
     # not it corrects a parse mistake.
-    $orig_match = $self->decruft($orig_match);
+    my $match = $self->decruft($orig_match);
+    $orig_match .= $cruft;
 
     my $replacement = '';
-    if( my $uri = $self->_is_uri(\$orig_match) ) {
+    if( my $uri = $self->_is_uri(\$match) ) {
         # It's a URI
         $self->{_uris_found}++;
-        $replacement = $self->{callback}->($uri, $orig_match);
+        
+        $uri .= $cruft;
+        $replacement = $self->{callback}->($uri, $match);
     }
     else {
         # False alarm
