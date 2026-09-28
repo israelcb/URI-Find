@@ -19,14 +19,10 @@ t/is_schemed.t
 t/load_schemeless.t
 t/rfc3986_appendix_c.t
 t/badinvo.t
-t/cruft_set.t
 t/de_re_cruft.t
 t/find_uris.t
 t/schemeless_to_schemed.t
-t/schemeless_uri_re.t
 t/top_level_domain_re.t
-t/uri_re.t
-t/uric_set.t
 t/issues/issue_11_mephinet.t
 t/issues/issue_12_godders.t
 t/issues/issue_17_lazarus1906.t
