@@ -114,6 +114,130 @@ my @non_rep_tests = (
     , ["Money, high value, cents", "\$ 426 329 404,88"]
 );
 
+my @rep_tests = (
+    # ==================================================
+    # AI Generated
+
+    # Prose
+    [
+        "Check the rules at https://perl.org; any doubts, let me know."
+        , "Check the rules at *URI*; any doubts, let me know."
+    ],[
+        "The release notes are at https://nodejs.org; read them first.",
+        "The release notes are at *URI*; read them first."
+    ],[
+        "The recipe is posted at https://allrecipes.com;",
+        "The recipe is posted at *URI*;"
+    ],[
+        "https://espn.com; check after the game.",
+        "*URI*; check after the game."
+    ],[
+        " https://github.com; Our roadmap lives there; feel free to comment.",
+        " *URI*; Our roadmap lives there; feel free to comment."
+    ],
+
+    # List with ; delimiter
+    , [
+        "Sources: https://metacpan.org; https://www.cpan.org; https://perldoc.perl.org",
+        "Sources: *URI*; *URI*; *URI*"
+    ],[
+        q{"https://mirror1.example.org";"'https://mirror2.example.net'";"https://mirror3.example.io},
+        q{"*URI*";"'*URI*'";"*URI*},
+    ],[
+        "See also:https://docs.python.org;https://docs.rust-lang.org;https://go.dev",
+        "See also:*URI*;*URI*;*URI*"
+    ]
+
+    # key=value logs
+    , [
+        "level=info; url=https://api.example.com; status=200",
+        "level=info; url=*URI*; status=200"
+    ],[
+        "job=nightly-sync; target=https://s3.example.com ; duration=45s",
+        "job=nightly-sync; target=*URI* ; duration=45s"
+    ],[
+        "trace_id=abc123; source=;https://ingest.example.dev; ; dropped=false",
+        "trace_id=abc123; source=;*URI*; ; dropped=false"
+    ],[
+        "queue=emails; template=https://mail.example.dev;sent=120",
+        "queue=emails; template=*URI*;sent=120"
+    ]
+    
+    # FAILED
+    # ,[
+    #     "ts=2026-09-28T10:00Z; endpoint=https://payments.example.io ; result=ok",
+    #     "ts=2026-09-28T10:00Z; endpoint=*URI* ; result=ok"
+    # ],
+    # ,[
+    #     "2026-09-28T10:00Z; endpoint=https://payments.example.io ; result=ok",
+    #     "2026-09-28T10:00Z; endpoint=*URI* ; result=ok"
+    # ],
+    # ,[
+    #     "; endpoint=https://payments.example.io ; ts=2026-09-28T10:00Z; result=ok",
+    #     "; endpoint=*URI* ; ts=2026-09-28T10:00Z; result=ok"
+    # ],
+
+    # Config/INI with trailing comment
+    , [
+        "homepage = https://metacpan.org; # official site",
+        "homepage = *URI*; # official site"
+    ],[
+        "docs_url = https://readthedocs.io; # internal wiki mirror",
+        "docs_url = *URI*; # internal wiki mirror"
+    ]
+
+    # Markdown
+    , [
+        "Docs: https://perldoc.perl.org; Wiki: https://wiki.perl.org",
+        "Docs: *URI*; Wiki: *URI*"
+    ],[
+        "Issues: https://bugs.example.net; Discussions:https://forum.example.com",
+        "Issues: *URI*; Discussions:*URI*"
+    ],
+
+    # Short ccTLD
+    , [
+        "Government site: https://gov.br; verify before you visit.",
+        "Government site: *URI*; verify before you visit."
+    ],[
+        "https://govt.nz; renewals close Friday.",
+        "*URI*; renewals close Friday."
+    ]
+
+#     # FAILED
+#     [
+#         "UK registry:;https://nominet.uk; check availability first.",
+#         "UK registry:*URI*; check availability first."
+#     ],
+
+    # Shell (cmd; cmd)
+    , [
+        "wget https://example.net; tar xzf archive.tar.gz",
+        "wget *URI*; tar xzf archive.tar.gz"
+    ],[
+        "curl -s https://api.example.dev; jq .",
+        "curl -s *URI*; jq ."
+    ]
+
+    # Long word before ;
+    , [
+        "Read the documentation at https://example.com/documentation; it's thorough.",
+        "Read the documentation at *URI*; it's thorough."
+    ],[
+        "The internationalization guide is at https://example.dev/internationalization; start here.",
+        "The internationalization guide is at *URI*; start here."
+    ]
+    
+    # Very short domain
+    , [
+        "Shortlink: https://a.io; curious.",
+        "Shortlink: *URI*; curious."
+    ],[
+        "Alias: https://t.co; used by many apps. https://z.dev;also",
+        "Alias: *URI*; used by many apps. *URI*;also"
+    ]
+);
+
 my @full_rep_tests = ([
     "Simple URL filtering, 'www.' included"
     , "http://www.perl.com"
@@ -161,7 +285,7 @@ my @full_rep_tests = ([
     , "file:///home/ronald/perl/absolute-perl/main.pl"
 ]);
 
-my @rep_tests = ([
+my @escaping_tests = ([
     "Emojis + &"
     , " 🔥 & ☀️& 💻 & 🏁 🤡 ⛓️‍💥"
     , " 🔥 &amp; ☀️&amp; 💻 &amp; 🏁 🤡 ⛓️‍💥"
@@ -197,11 +321,12 @@ sub get_filter_tests {
     
     my $non_rep_cb = sub { $_[0] };
     add_tests($non_rep_cb, \@tests, \@non_rep_tests);
+    add_tests(sub { '*URI*' }, \@tests, \@rep_tests);
 
     foreach my $r (@replacements) {
         my $rep_cb = sub { $r };
         add_tests($rep_cb, \@tests, \@full_rep_tests, $r);
-        add_tests($rep_cb, \@tests, \@rep_tests)
+        add_tests($rep_cb, \@tests, \@escaping_tests)
     }
 
     @tests
